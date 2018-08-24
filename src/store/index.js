@@ -6,11 +6,16 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+        isPlaying: false,
+        hasAudio: false,
+        currentIndex: 0,
+
         include: [],
         artists: [],
         artistData: {},
         albums: [],
         albumData: {},
+        playlist: [],
         recents: localStorage.musicRecents
             ? JSON.parse(localStorage.musicRecents)
             : [],
@@ -39,6 +44,25 @@ export default new Vuex.Store({
         FETCHALBUM: (state, { data, album }) => {
             state.albumData = { ...state.albumData, ...{ [album]: data } }
         },
+        PLAYSONG: (state, { playlist, index }) => {
+            let recents = state.recents.filter(
+                (track, i) => track.album !== playlist[index].album && i < 7
+            )
+            recents.splice(0, 0, playlist[index])
+            state.playlist = playlist
+            state.recents = recents
+            localStorage.musicRecents = JSON.stringify(state.recents);
+
+            state.isPlaying = true
+            state.hasAudio = true
+            state.currentIndex = index
+        },
+        RESUME: (state) => {
+            state.isPlaying = true
+        },
+        PAUSE: (state) => {
+            state.isPlaying = false
+        }
     },
     actions: {
         addInclude: ({ commit }, n) => commit('ADDINCLUDE', n),
@@ -54,6 +78,15 @@ export default new Vuex.Store({
         // },
         fetchAlbum: ({ commit }, album) => {
             fetchAlbum(album).then(data => commit('FETCHALBUM', { data, album }))
+        },
+        playSong: ({ commit }, { playlist, index }) => {
+            commit('PLAYSONG', { playlist, index })
+        },
+        resume: ({ commit }) => {
+            commit('RESUME')
+        },
+        pause: ({ commit }) => {
+            commit('PAUSE')
         }
     }
 })

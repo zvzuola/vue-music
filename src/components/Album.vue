@@ -8,7 +8,7 @@
         <div>{{artist}}</div>
       </div>
     </div>
-    <div :class="$style['item']" v-for="item in tracks" :key="item.name">
+    <div :class="$style['item']" v-for="(item, index) in tracks" :key="item.name" @click="playSong({playlist: tracks, index})">
       {{item.name}}
     </div>
   </div>
@@ -35,7 +35,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["fetchAlbum"])
+    ...mapActions(["fetchAlbum", "playSong"])
   },
   created() {
     const album = this.$route.params.album;

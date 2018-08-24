@@ -9,20 +9,24 @@
     <keep-alive :include="include">
       <router-view></router-view>
     </keep-alive>
+    <player></player>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
+import player from './components/Player'
+
 export default {
   name: "app",
+  components: {
+    player
+  },
   computed: {
     ...mapState(["include"])
   },
-  methods: {
-  },
-  mounted() {
-  }
+  methods: {},
+  mounted() {}
 };
 </script>
 
