@@ -1,15 +1,17 @@
 <template>
-    <div :class="$style['m-player']">
-        <div :class="$style['control']" v-if="track">
-            <audio v-show="false" ref="audio" :src="`http://tannerv.ddns.net:12345/SpotiFree/${track.url}`"></audio>
-            <button :class="$style['pause']" v-if="isPlaying" @click="handlePause"></button>
-            <button :class="$style['resume']" v-else @click="handlePlay"></button>
-            <div :class="$style['time']">
-                <div>{{time.current}}</div>
-                <div>{{time.max}}</div>
-            </div>
-        </div>
+  <div :class="$style['m-player']" v-if="track">
+    <div :class="$style['control']">
+      <audio v-show="false" ref="audio" :src="`http://tannerv.ddns.net:12345/SpotiFree/${track.url}`" @ended="nextSong"></audio>
+      <button :class="$style['prev-song']" @click="handlePrevSong" :disabled="currentIndex === 0"></button>
+      <button :class="$style['pause']" v-if="isPlaying" @click="handlePause"></button>
+      <button :class="$style['resume']" v-else @click="handlePlay"></button>
+      <button :class="$style['next-song']" @click="handleNextSong" :disabled="currentIndex + 1 >= playlist.length"></button>
+      <div :class="$style['time']">
+        <div>{{time.current}}</div>
+        <div>{{time.max}}</div>
+      </div>
     </div>
+  </div>
 </template>
 <script>
 import { mapState, mapActions } from "vuex";
@@ -32,10 +34,12 @@ export default {
   updated() {
     if (this.isPlaying && this.$refs.audio) {
       this.handlePlay();
+    } else if (!this.isPlaying && this.$refs.audio && this.$refs.audio.src) {
+      this.handlePause();
     }
   },
   methods: {
-    ...mapActions(["pause", "resume"]),
+    ...mapActions(["pause", "resume", "nextSong", "prevSong"]),
     handlePlay: function() {
       if (this.$refs.audio.paused) {
         const playPromise = this.$refs.audio.play();
@@ -52,6 +56,12 @@ export default {
         clearInterval(this.playInterval);
         this.pause();
       }
+    },
+    handleNextSong() {
+      if (this.currentIndex + 1 < this.playlist.length) this.nextSong();
+    },
+    handlePrevSong() {
+      if (this.currentIndex > 0) this.prevSong();
     },
     createTimeInterval() {
       this.playInterval = setInterval(() => {
@@ -82,13 +92,14 @@ export default {
 </script>
 <style lang="scss" module>
 .m-player {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   height: 64px;
   left: 0;
   right: 0;
   display: flex;
   align-items: center;
+  background-color: #fff;
 }
 .btn {
   margin: 0;
@@ -115,6 +126,23 @@ export default {
     border-right: 5px solid;
     border-left: 5px solid;
     margin-left: 30px;
+  }
+  .prev-song {
+    @extend .next-song;
+    transform: rotateZ(180deg);
+  }
+  .next-song {
+    @extend .resume;
+    position: relative;
+    border-left: 11px solid;
+    &:after {
+      content: "";
+      position: absolute;
+      border-left: 4px solid;
+      left: 100%;
+      height: 20px;
+      top: -10px;
+    }
   }
   .time {
     display: flex;

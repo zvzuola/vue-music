@@ -62,7 +62,14 @@ export default new Vuex.Store({
         },
         PAUSE: (state) => {
             state.isPlaying = false
-        }
+        },
+        NEXTSONG: (state) => {
+            state.isPlaying = !!state.isPlaying && (state.currentIndex + 1 !== state.playlist.length)
+            state.currentIndex = state.currentIndex + (state.currentIndex + 1 !== state.playlist.length ? 1 : 0)
+        },
+        PREVSONG: (state) => {
+            state.currentIndex = state.currentIndex > 0 ? state.currentIndex - 1 : state.currentIndex
+        },
     },
     actions: {
         addInclude: ({ commit }, n) => commit('ADDINCLUDE', n),
@@ -87,6 +94,12 @@ export default new Vuex.Store({
         },
         pause: ({ commit }) => {
             commit('PAUSE')
+        },
+        nextSong: ({ commit }) => {
+            commit('NEXTSONG')
+        },
+        prevSong: ({ commit }) => {
+            commit('PREVSONG')
         }
     }
 })
