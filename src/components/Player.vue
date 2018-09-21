@@ -6,15 +6,16 @@
       <button :class="$style['pause']" v-if="isPlaying" @click="handlePause"></button>
       <button :class="$style['resume']" v-else @click="handlePlay"></button>
       <button :class="$style['next-song']" @click="handleNextSong" :disabled="currentIndex + 1 >= playlist.length"></button>
-      <div :class="$style['time']">
-        <div>{{time.current}}</div>
-        <div>{{time.max}}</div>
+      <div :class="$style['time']" v-if="time.max">
+        <div :class="$style['item']">{{time.current | formatTime}}/{{time.max | formatTime}}</div>
+        <vue-slider width="100%" :max="time.max" v-model="time.current" :tooltip="false" @drag-start="dragStart" @drag-end="dragEnd" />
       </div>
     </div>
   </div>
 </template>
 <script>
 import { mapState, mapActions } from "vuex";
+import VueSlider from "vue-slider-component";
 
 export default {
   data() {
@@ -24,6 +25,9 @@ export default {
         max: 0
       }
     };
+  },
+  components: {
+    VueSlider
   },
   computed: {
     ...mapState(["playlist", "currentIndex", "isPlaying"]),
@@ -67,12 +71,22 @@ export default {
       this.playInterval = setInterval(() => {
         if (this.$refs.audio) {
           this.time = {
-            current: this.formatTime(this.$refs.audio.currentTime),
-            max: this.formatTime(this.$refs.audio.duration)
+            current: Math.floor(this.$refs.audio.currentTime),
+            max: Math.floor(this.$refs.audio.duration)
           };
         }
       }, 1000);
     },
+
+    dragStart() {
+      clearInterval(this.playInterval);
+    },
+    dragEnd() {
+      this.$refs.audio.currentTime = this.time.current;
+      if (this.isPlaying) this.createTimeInterval();
+    }
+  },
+  filters: {
     formatTime(seconds = 0, guide = seconds) {
       let s = Math.floor(seconds % 60);
       let m = Math.floor((seconds / 60) % 60);
@@ -145,11 +159,20 @@ export default {
     }
   }
   .time {
+    position: relative;
     display: flex;
     flex: 1;
+    margin-left: 30px;
     justify-content: space-around;
     font-size: 14px;
     align-items: center;
+    .item {
+      position: absolute;
+      top: 100%;
+      right: 8px;
+      margin-top: -4px;
+      font-size: 12px;
+    }
   }
 }
 </style>
