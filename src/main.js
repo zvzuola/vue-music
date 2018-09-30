@@ -4,6 +4,7 @@ import App from './App.vue'
 import store from './store'
 import Index from './components/Index'
 import List from './components/List'
+import Item from './components/Item'
 import Artists from './components/Artists'
 import Artist from './components/Artist'
 import Album from './components/Album'
@@ -14,39 +15,29 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    component: Index,
-    meta: {
-      keepAlive: false
-    }
+    component: Index
   },
   {
     path: '/list',
-    component: List,
-    meta: {
-      keepAlive: true
-    }
+    component: List
+  },
+  {
+    path: '/:id',
+    name: 'item',
+    component: Item
   },
   {
     path: '/artists',
     name: 'artists',
-    component: Artists,
-    meta: {
-      keepAlive: false
-    }
+    component: Artists
   },
   {
     path: '/artists/:artist',
-    component: Artist,
-    meta: {
-      keepAlive: false
-    },
+    component: Artist
   },
   {
     path: '/albums/:album',
-    component: Album,
-    meta: {
-      keepAlive: false
-    },
+    component: Album
   },
 ]
 

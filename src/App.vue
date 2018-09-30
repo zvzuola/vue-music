@@ -1,11 +1,5 @@
 <template>
   <div id="app" :class="$style['a']">
-    <!-- <router-link to="/">index</router-link>
-    <router-link to="/list">list</router-link> -->
-    <!-- <keep-alive include="list">
-      <router-view v-if="$route.meta.keepAlive"></router-view>
-    </keep-alive>
-    <router-view v-if="!$route.meta.keepAlive"></router-view> -->
     <keep-alive :include="include">
       <router-view></router-view>
     </keep-alive>

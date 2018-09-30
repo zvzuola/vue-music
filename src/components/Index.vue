@@ -5,6 +5,7 @@
         <confirm ref="confirm" text="提示" @ok="ok" @cancel="cancel" /> -->
         <!-- <button @click="this.changeView('artists')">artists</button> -->
         <router-link :class="$style['nav']" to='artists'>artists</router-link>
+        <div><router-link :class="$style['nav']" to='list'>list</router-link></div>
         <recently-played></recently-played>
     </div>
 </template>
