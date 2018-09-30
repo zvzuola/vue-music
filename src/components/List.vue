@@ -1,7 +1,7 @@
 <template>
     <div>
       <div v-for="item in lists" :key="item.id" >
-        <router-link :to="`/${item.id}`">{{item.text}}</router-link>
+        <router-link :to="`/list/${item.id}`">{{item.text}}</router-link>
       </div>
       <p>注意从item页面返回到list页面时，第一个随机数据是没有变的，说明list组件是缓存成功的，从首页跳转过来我们不希望缓存，所以第一个随机数总是会变</p>
       <div><router-link to='/'>返回首页</router-link></div>

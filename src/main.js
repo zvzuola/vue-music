@@ -22,7 +22,7 @@ const routes = [
     component: List
   },
   {
-    path: '/:id',
+    path: '/list/:id',
     name: 'item',
     component: Item
   },
